@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="BoardMapper">
+	
+	<select id="selectArticleList" resultType="boardVO" parameterType="searchVO">
+		select * 
+		from hr.c_board02 
+		where deleteFlag = 'no' 
+		<if test="searchType == 'writer'">
+			and id = #{searchValue}
+		</if>
+		<if test="searchType == 'article'">
+			and title like '%'||#{searchValue}||'%'
+		</if>  
+		order by articleNO desc
+	</select>
+	
+	<select id="selectMainArticleList" resultType="boardVO">
+		<![CDATA[
+		    select * 
+			from ( select *
+				   from hr.c_board02 
+				   where deleteFlag = 'no'
+				   order by articleNO desc
+				 )
+			where rownum <= 6
+	    ]]>
+	</select>
+	
+	<select id="selectArticle" resultType="boardVO" parameterType="Integer">
+		select * from hr.c_board02 where articleNO = #{articleNO}
+	</select>
+	
+	<select id="selectCurrentArticleNO" resultType="Integer">
+		select hr.c_boardseq02.currval from dual
+	</select>
+	
+	<insert id="insertNewArticle" parameterType="boardVO">
+		insert into hr.c_board02
+		values(hr.c_boardseq02.nextval, default, #{title}, #{content},  #{imageFileName}, default, #{id}, default, default)
+	</insert>
+	
+	<update id="updateArticleDeleteFlag" parameterType="Integer">
+		update hr.c_board02
+		set deleteFlag = 'yes'
+		where articleNO = #{articleNO}
+	</update>
+	
+	<update id="updateArticle" parameterType="boardVO">
+		update hr.c_board02
+		set title=#{title}, content=#{content}
+		
+		<if test="imageFileName != null and imageFileName.length() !=0">
+			, imageFileName = #{imageFileName }
+		
+		</if>
+		where articleNO=#{articleNO }
+	</update>
+	
+	<update id="updateViewCount" parameterType="Integer">
+		update hr.c_board02
+		set viewCount = viewCount + 1
+		where articleNO = #{articleNO}
+	</update>
+	
+	
+	
+	<!-- 추천 -->
+	
+	<select id="selectIsRecommend" parameterType="java.util.Map" resultType="Boolean">
+		select (case when count(*) = 1 then 1
+					 else 0 
+				end)
+		from hr.c_recommend02 
+		where boardArticleNO = #{boardArticleNO} and userId = #{userId}
+	</select>
+	
+	
+	<select id="selectCountRecommend" parameterType="Integer" resultType="Integer">
+		select count(*)
+		from hr.c_recommend02 
+		where boardArticleNO = #{boardArticleNO}
+	</select>
+	
+	<insert id="insertRecommend" parameterType="java.util.Map">
+		insert into hr.c_recommend02
+		values(#{boardArticleNO}, #{userId}, default)
+	</insert>
+	
+</mapper>

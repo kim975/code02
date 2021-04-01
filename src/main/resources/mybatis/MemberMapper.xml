@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- myBatis SQL-매퍼파일임을 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+             
+
+<!-- member.xml의 네임스페이스를 지정합니다. -->
+<!-- namespace에 설정되는 값은 "mapper.확장자를 제외한 파일이름 형태"로 기술-->
+<mapper namespace="MemberMapper">
+	
+	<!-- <select id="selectAllMembersList" resultMap="memberResult">
+		select * from hr.t_member order by joinDate desc
+	</select>-->
+
+	<select id="selectLogin" resultType="loginVO" parameterType="HashMap">
+		select id, name
+		from hr.c_member02
+		where id= #{id} and password=#{password} and deleteFlag = 'no'
+	</select>
+	
+	<select id="selectDuplicateId" resultType="String" parameterType="String">
+		select (case when count(*) = 0 then 'usable'
+					 else 'not_usable' end) as result
+		from hr.c_member02
+		where id= #{id}
+	</select>
+
+	<select id="selectDuplicateEmail" resultType="String" parameterType="String">
+		select (case when count(*) = 0 then 'usable'
+					 else 'not_usable' end) as result
+		from hr.c_member02
+		where email= #{email}
+	</select>
+
+	<select id="selectDuplicatePhone" resultType="String" parameterType="String">
+		select (case when count(*) = 0 then 'usable'
+					 else 'not_usable' end) as result
+		from hr.c_member02
+		where phoneNumber= #{phone}
+	</select>
+
+	<select id="selectMemberById" resultType="memberVO" parameterType="String">
+		select * from hr.c_member02
+		where id=#{id}
+	</select>
+
+	<insert id="insertMember" parameterType="memberVO">
+		insert into hr.c_member02
+		values(#{id}, #{password}, #{name}, #{birthDay}, #{email}, #{phoneNumber}, default, default)
+	</insert>
+	
+	<update id="updateMember" parameterType="memberVO">
+		update hr.c_member02
+		set password=#{password}, name=#{name}, birthDay=#{birthDay}, email=#{email}, phoneNumber = #{phoneNumber}
+		where id=#{id}
+	</update>
+	
+	<update id="updateDelMember" parameterType="String">
+		update hr.c_member02
+		set deleteFlag = 'yes'
+		where id=#{id}
+	</update>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	
+	<typeAliases>
+		<typeAlias alias="memberVO" type="com.spring5.code02.member.MemberVO"/>
+		<typeAlias alias="loginVO" type="com.spring5.code02.member.LoginVO"/>
+		<typeAlias alias="boardVO" type="com.spring5.code02.board.BoardVO"/>
+		<typeAlias alias="replyVO" type="com.spring5.code02.reply.ReplyVO"/>
+		<typeAlias alias="searchVO" type="com.spring5.code02.vo.SearchVO"/>
+	</typeAliases>
+
+</configuration>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- myBatis SQL-매퍼파일임을 선언 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+             
+
+<!-- member.xml의 네임스페이스를 지정합니다. -->
+<!-- namespace에 설정되는 값은 "mapper.확장자를 제외한 파일이름 형태"로 기술-->
+<mapper namespace="AdminMapper">
+	
+	<select id="selectAllMembersList" resultType="memberVO">
+		select * from hr.c_member02 order by joinDate desc
+	</select>
+
+	<select id="selectAllArticlesList" resultType="boardVO">
+		select * 
+		from hr.c_board02 
+		order by articleNO desc
+	</select>
+
+	<select id="selectAllReplysList" resultType="replyVO">
+		select * 
+		from hr.c_reply_board02 
+		order by articleNO desc
+	</select>
+	
+	<update id="updateRemoveReply" parameterType="Integer">
+		update hr.c_reply_board02
+		set content = '삭제된 댓글 입니다.', id = 'master' ,deleteFlag = 'yes'
+		where articleNO = #{articleNO}
+	</update>
+	
+	<delete id="deleteMember" parameterType="String">
+		delete from hr.c_member02 where id=#{id}
+	</delete>
+	
+	<delete id="deleteArticle" parameterType="Integer">
+		delete from hr.c_board02 where articleNO=#{articleNO}
+	</delete>
+	
+	<delete id="deleteReply" parameterType="Integer">
+		delete from hr.c_reply_board02 where articleNO=#{articleNO}
+	</delete>
+</mapper>

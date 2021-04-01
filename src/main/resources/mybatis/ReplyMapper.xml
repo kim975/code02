@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ReplyMapper">
+	
+	<!-- <select id="selectAllReply">
+		select level, articleNO, parentNO, title, content, writeDate, id 
+		from hr.c_reply_board02
+		where = parentNO
+		start with parentNO =0 
+		connect by prior articleNO = parentNO 
+		order siblings by articleNO desc 
+	</select> -->
+	
+	<!-- <select id="selectAllReply" resultType="replyVO" parameterType="Integer">
+		select * from hr.c_reply_board02
+		where mainParentNO = #{mainParentNO}
+		order by articleNO desc
+	</select> -->
+	
+	<select id="selectAllReply" resultType="replyVO" parameterType="Integer">
+		select level, ARTICLENO,MAINPARENTNO,PARENTNO,CONTENT,WRITEDATE,ID,IMAGEFILENAME, deleteFlag
+		from hr.c_reply_board02
+		where MAINPARENTNO = #{mainParentNO} and deleteFlag = 'no'
+		start with parentNO =0 
+		connect by prior articleNO = parentNO 
+		order siblings by articleNO desc
+	</select>
+	
+	<select id="selectMyReply" resultType="replyVO" parameterType="String">
+		select * from hr.c_reply_board02
+		where id = #{id} and deleteFlag = 'no'
+		order by articleNO desc
+	</select>
+	
+	<insert id="insertNewReply">
+		insert into hr.c_reply_board02
+		values(hr.c_replyseq02.nextval, #{mainParentNO}, #{parentNO}, #{content}, default, #{id},  #{imageFileName},  default)
+	</insert>
+	
+	<update id="updateReplyDeleteFlag" parameterType="Integer">
+		update hr.c_reply_board02
+		set deleteFlag = 'yes'
+		where articleNO = #{articleNO}
+	</update>
+	
+	<update id="updateReply" parameterType="replyVO">
+		update hr.c_reply_board02
+		set content=#{content}
+		where articleNO=#{articleNO }
+	</update>
+	
+	<update id="updateParentDelete" parameterType="Integer">
+		update hr.c_reply_board02
+		set deleteFlag = 'yes'
+		where mainParentNO = #{mainParentNO}
+	</update>
+	
+</mapper>
